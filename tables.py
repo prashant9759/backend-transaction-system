@@ -1,11 +1,22 @@
 from db import db
+from hash import bcrypt
 
 class UserModel(db.Model):
     __tablename__ = "User"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=False, nullable=False)
+    name = db.Column(db.String(80), unique=True, nullable=False)
     stores = db.relationship("StoreModel", back_populates="user")
+    _password = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(80), unique=True, nullable=False)
+
+    @property
+    def password(self):
+        return self.password
+    
+    @password.setter
+    def password(self, plainPassword):
+        self._password = bcrypt.generate_password_hash(plainPassword)
 
 class StoreModel(db.Model):
     __tablename__ = "Store"
